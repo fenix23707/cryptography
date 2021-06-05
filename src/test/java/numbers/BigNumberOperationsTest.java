@@ -1,5 +1,6 @@
 package numbers;
 
+import ciphers.CipherDes;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -229,4 +230,17 @@ public class BigNumberOperationsTest extends TestCase {
         assertEquals(true,rez.getSign());
     }
 
+    @Test
+    public void testCyclicShiftRight() {
+        BigNumber number = new BigNumber(10, "123");
+        BigNumber rez = BigNumberOperations.cyclicShift (number, -1);
+        assertEquals("312", rez.toString());
+    }
+
+    @Test
+    public void testCyclicShiftLeft() {
+        BigNumber number = new BigNumber(2, "00010111");
+        BigNumber rez = BigNumberOperations.cyclicShift (number, 1);
+        assertEquals("00101110", rez.toString());
+    }
 }

@@ -605,6 +605,16 @@ public class BigNumberOperations {
         }
         return convertTo(rez,baseNumSys);
     }
+
+    public static BigNumber cyclicShift(BigNumber num, int shift) {
+        BigNumber newNum = new BigNumber(num.getBaseNumSys(), num.getSize(), true);
+        newNum.fillByDigit(0);
+        for (int i = 0; i < num.getSize(); i++) {
+            int temp = Math.floorMod(i + shift, num.getSize());
+            newNum.setDigitAt(num.getDigitAt(i), temp);
+        }
+        return newNum;
+    }
 }
 
 

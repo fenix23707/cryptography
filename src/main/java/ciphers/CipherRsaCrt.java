@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CipherRsaCrt{
-    private int maxSize = 20;
+    private int maxSize = 5;
     private String alphabet = " абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
     private BigNumber p;
     private BigNumber q;
@@ -112,7 +112,7 @@ public class CipherRsaCrt{
         BigNumber fy = BigNumberOperations.functionEuler(p,q);
         do{
             e = new BigNumber(10, true, ThreadLocalRandom.current().nextInt(5,80));
-        }while (!PrimeNumbers.isPrimeNumber(e,1) && (e.compareTo(fy) != 0));
+        }while (!BigNumberOperations.nodEuclidean(e,p).isEqualDigit(1));//условие не верно должно быть добавлено чтобы нод fy и e был равен 1
     }
 
 }

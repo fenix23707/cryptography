@@ -3,6 +3,9 @@ package numbers;
 import junit.framework.TestCase;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BigNumberTest extends TestCase {
 
     @Test
@@ -69,4 +72,67 @@ public class BigNumberTest extends TestCase {
         assertEquals(true,lowPart.getSign());
         assertEquals(2,lowPart.getBaseNumSys());
     }
+
+    @Test
+    public void testDivideInto() {
+        BigNumber number = new BigNumber(10,"11111111");
+        List<BigNumber> nums = number.divideInto(2);
+
+        assertEquals("1111",nums.get(0).toString());
+        assertEquals("1111",nums.get(1).toString());
+    }
+
+    @Test
+    public void testDivideIntoOddSize() {
+        BigNumber number = new BigNumber(10,"1111111");
+        List<BigNumber> nums = number.divideInto(2);
+
+        assertEquals("1111",nums.get(0).toString());
+        assertEquals("111",nums.get(1).toString());
+    }
+
+    @Test
+    public void testDivideIntoSizeEqualsParts() {
+        BigNumber number = new BigNumber(10,"10");
+        List<BigNumber> nums = number.divideInto(2);
+
+        assertEquals("0",nums.get(0).toString());
+        assertEquals("1",nums.get(1).toString());
+    }
+
+    @Test
+    public void testAddNum() {
+        BigNumber num1 = new BigNumber(10,"12");
+        BigNumber num2 = new BigNumber(10,"34");
+        num1.addNum(num2);
+        assertEquals("3412",num1.toString());
+    }
+
+    @Test
+    public void testMerge() {
+        BigNumber number = new BigNumber(10,"11110000");
+        List<BigNumber> nums = number.divideInto(2);
+
+        assertEquals("11110000",BigNumber.merge(nums).toString());
+    }
+
+    @Test
+    public void testMergeOddSize() {
+        BigNumber number = new BigNumber(10,"1234567");
+        List<BigNumber> nums = number.divideInto(2);
+        for (BigNumber item: nums) {
+            System.out.println(item);
+        }
+        assertEquals("1234567",BigNumber.merge(nums).toString());
+    }
+
+    @Test
+    public void testMergeSizeEqualsOne() {
+        BigNumber number = new BigNumber(10,"1");
+        List<BigNumber> nums = number.divideInto(1);
+
+        assertEquals("1",BigNumber.merge(nums).toString());
+    }
+
+
 }

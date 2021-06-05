@@ -1,8 +1,6 @@
 package numbers;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BigNumber implements Comparable<BigNumber> {
@@ -13,7 +11,6 @@ public class BigNumber implements Comparable<BigNumber> {
 
     private boolean sign = true;
 
-    //конструкторы:
     public BigNumber(int baseNumSys, int size, boolean isPositive) {
         this.baseNumSys = baseNumSys;
         number = new Vector<Integer>(size);
@@ -55,7 +52,6 @@ public class BigNumber implements Comparable<BigNumber> {
         this.baseNumSys = baseNumSys;
     }
 
-    //гетеры:
     public int getBaseNumSys() {
         return this.baseNumSys;
     }
@@ -84,7 +80,6 @@ public class BigNumber implements Comparable<BigNumber> {
         return this.number.firstElement();
     }
 
-    //сетеры:
     public void setSign(boolean sign) {
         this.sign = sign;
     }
@@ -139,6 +134,15 @@ public class BigNumber implements Comparable<BigNumber> {
 
     public void addDigit(int index, int digit) {
         number.add(index, digit);
+    }
+
+    public void addNum(BigNumber num) {
+        if ((num.getBaseNumSys() != baseNumSys)) {
+            throw new IllegalArgumentException("base num system is incorrect");
+        }
+        for(int item : num.getNumber()) {
+            number.add(item);
+        }
     }
 
     public void removeDigitAt(int index) {
@@ -238,13 +242,48 @@ public class BigNumber implements Comparable<BigNumber> {
     }
 
     public BigNumber getHighPart() {
-        return new BigNumber(baseNumSys,sign,number.subList(number.size()/2,number.size()));
+        return new BigNumber(baseNumSys, sign, number.subList(number.size() / 2, number.size()));
     }
 
     public BigNumber getLowPart() {
         if (number.size() == 1) {
-            return new BigNumber(baseNumSys,sign,number);
+            return new BigNumber(baseNumSys, sign, number);
         }
-        return new BigNumber(baseNumSys,sign,number.subList(0,number.size()/2));
+        return new BigNumber(baseNumSys, sign, number.subList(0, number.size() / 2));
+    }
+
+    public List<BigNumber> divideInto(int parts) {
+        if (parts < 0) {
+            throw new IllegalArgumentException("parts is negative");
+        }
+        if (parts > number.size()) {
+            throw new IllegalArgumentException("size less than parts");
+        }
+
+        ArrayList<BigNumber> nums = new ArrayList<>(parts);
+
+        int partSize = number.size() / parts;
+        if ((number.size() % parts) != 0) {
+            partSize++;
+        }
+        //TODO: надо доделать
+        for (int i = 0, k = 0; i < parts; i++) {
+            BigNumber num = new BigNumber(baseNumSys);
+            for (int j = 0; j < partSize && k < number.size(); j++) {
+                num.addDigit(number.get(k++));
+            }
+            nums.add(num);
+        }
+        return nums;
+    }
+
+
+
+    public static BigNumber merge(List<BigNumber> numbers) {
+        BigNumber mergeNum = new BigNumber(numbers.get(0).getBaseNumSys());
+        for (BigNumber num : numbers) {
+            mergeNum.addNum(num);
+        }
+        return mergeNum;
     }
 }

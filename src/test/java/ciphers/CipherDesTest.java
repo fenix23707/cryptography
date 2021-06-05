@@ -16,4 +16,11 @@ public class CipherDesTest extends TestCase {
 //        System.out.println(extended);
         assertEquals(expected,cipherDes.initialPermutation(block).toString());
     }
+
+    public void testConvertWithS() {
+        CipherDes cipherDes = new CipherDes();
+        BigNumber num = new BigNumber(2,"101011");
+        assertEquals("1001",cipherDes.convertWithS(num,2).toString());
+    }
+
 }

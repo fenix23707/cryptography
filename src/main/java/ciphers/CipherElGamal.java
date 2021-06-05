@@ -16,11 +16,11 @@ public class CipherElGamal {
 
     private BigNumber o;
 
-    private BigNumber x = null;
+    private BigNumber x;
 
     private String alphabet = " абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
-    private int maxNumberOfDigit = 5;
+    private int maxNumberOfDigit = 3;
 
     public CipherElGamal() {
         generatePAndG(maxNumberOfDigit);
@@ -40,11 +40,11 @@ public class CipherElGamal {
 
     public String decryption(BigNumber cipher) {
         if (x == null) {
-            x = findX(g,y,p);
+            x = findX(g, y, p);
         }
-        BigNumber k = BigNumberOperations.degreeRemainder2(o,x,p);
-        BigNumber inverseK = BigNumberOperations.inverseBezu(k,p);
-        BigNumber msg = BigNumberOperations.mullRemainder(cipher,inverseK,p);
+        BigNumber k = BigNumberOperations.degreeRemainder2(o, x, p);
+        BigNumber inverseK = BigNumberOperations.inverseBezu(k, p);
+        BigNumber msg = BigNumberOperations.mullRemainder(cipher, inverseK, p);
         return bigNUmberToString(msg);
     }
 
@@ -56,31 +56,31 @@ public class CipherElGamal {
         }
         x = generateKorX(p);
         BigNumber k = generateKorX(p);
-        return encryption(numMsg,x,k);
+        return encryption(numMsg, x, k);
     }
 
     public BigNumber encryption(String msg, BigNumber x, BigNumber k) {
-        return encryption(charToBigNumber(msg),x,k);
+        return encryption(charToBigNumber(msg), x, k);
     }
 
-    public BigNumber encryption(BigNumber msg,BigNumber x, BigNumber k) {
+    public BigNumber encryption(BigNumber msg, BigNumber x, BigNumber k) {
         if (msg.compareTo(p) >= 0) {
             maxNumberOfDigit = msg.getSize();
             generatePAndG(maxNumberOfDigit);
         }
 
-        y = BigNumberOperations.degreeRemainder2(g,x,p);
-        BigNumber mainK = BigNumberOperations.degreeRemainder2(y,k,p);
-        BigNumber cipher = BigNumberOperations.mullRemainder(msg,mainK,p);
-        o = BigNumberOperations.degreeRemainder2(g,k,p);
+        y = BigNumberOperations.degreeRemainder2(g, x, p);
+        BigNumber mainK = BigNumberOperations.degreeRemainder2(y, k, p);
+        BigNumber cipher = BigNumberOperations.mullRemainder(msg, mainK, p);
+        o = BigNumberOperations.degreeRemainder2(g, k, p);
         return cipher;
     }
 
     private BigNumber findX(BigNumber g, BigNumber y, BigNumber p) {
         BigNumber temp = g;
-        BigNumber x = new BigNumber(g.getBaseNumSys(),"1");
+        BigNumber x = new BigNumber(g.getBaseNumSys(), "1");
         while (temp.compareTo(y) != 0) {
-            temp = BigNumberOperations.mullRemainder(temp,g,p);
+            temp = BigNumberOperations.mullRemainder(temp, g, p);
             temp.removeExtraZeros();
             x = BigNumberOperations.inc(x);
         }
@@ -88,25 +88,25 @@ public class CipherElGamal {
     }
 
     public BigNumber charToBigNumber(String msg) {
-        StringBuilder builder = new StringBuilder(2*msg.length());
-        for(int i = 0; i < msg.length(); i++) {
+        StringBuilder builder = new StringBuilder(2 * msg.length());
+        for (int i = 0; i < msg.length(); i++) {
             String num = String.valueOf(alphabet.indexOf(msg.charAt(i)));
             if (num.length() == 1) {
                 num = "0" + num;
             }
             builder.append(num);
         }
-        return new BigNumber(p.getBaseNumSys(),builder.toString());
+        return new BigNumber(p.getBaseNumSys(), builder.toString());
     }
 
     public String bigNUmberToString(BigNumber num) {
         String numStr = num.toString();
-        if(numStr.length() % 2 != 0) {
+        if (numStr.length() % 2 != 0) {
             numStr = "0" + numStr;
         }
         StringBuilder msg = new StringBuilder(numStr.length());
-        for(int i = 0; i < numStr.length(); i += 2) {
-            String temp = numStr.substring(i,i + 2);
+        for (int i = 0; i < numStr.length(); i += 2) {
+            String temp = numStr.substring(i, i + 2);
             int index = Integer.parseInt(temp);
             char letter = alphabet.charAt(index);
             msg.append(letter);
@@ -119,10 +119,13 @@ public class CipherElGamal {
     }
 
     private void generatePAndG(int maxNumberOfDigit) {
-        p = PrimeNumbers.getPrimeNumber(10,maxNumberOfDigit);
+        p = PrimeNumbers.getPrimeNumber(10, maxNumberOfDigit);
         // g можно выбоать любое число большее 1. т.к. p простое число, а g должен быть взаимно прост с p
         int b = p.getBaseNumSys();
-        int startValue = ThreadLocalRandom.current().nextInt(2,b);
-        g = new BigNumber(b, String.valueOf(startValue));
+        int startValue = ThreadLocalRandom.current().nextInt(2, b);
+        g = new BigNumber(10,true,startValue);
+        while (!MultiplicativeGroup.isPrimitiveRoot(g, p)) {
+            g = BigNumberOperations.inc(g);
+        }
     }
 }
