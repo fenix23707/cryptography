@@ -334,6 +334,4 @@ public class CipherDes {
 
         return cipher;
     }
-
-
 }

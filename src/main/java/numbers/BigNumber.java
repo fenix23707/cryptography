@@ -1,5 +1,7 @@
 package numbers;
 
+import ciphers.SingleVariableFunction;
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -277,13 +279,35 @@ public class BigNumber implements Comparable<BigNumber> {
         return nums;
     }
 
-
-
     public static BigNumber merge(List<BigNumber> numbers) {
         BigNumber mergeNum = new BigNumber(numbers.get(0).getBaseNumSys());
         for (BigNumber num : numbers) {
             mergeNum.addNum(num);
         }
         return mergeNum;
+    }
+
+    public static BigNumber linearFeedbackShiftRegister(BigNumber start,
+                                                 SingleVariableFunction function, int size) {
+        start = BigNumberOperations.convertTo(start, 2);
+        BigNumber copyStart = new BigNumber(start);
+        BigNumber rez = new BigNumber(2, size, true);
+        int period = -1;
+
+        boolean finded = false;
+        for (int i = 0; i < size; i ++) {
+
+            int temp = function.calculate(copyStart);
+            copyStart = BigNumberOperations.cyclicShift(copyStart, 1);
+            rez.addDigit(copyStart.getFirstDigit());
+            copyStart.setDigitAt(temp, 0);
+
+            if (copyStart.compareTo(start) == 0 && !finded) {
+                period = i + 1;
+                finded = true;
+            }
+        }
+        System.out.println("Период регистра: " + period);
+        return rez;
     }
 }

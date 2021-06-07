@@ -1,5 +1,6 @@
 package numbers;
 
+import ciphers.SingleVariableFunction;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -120,9 +121,6 @@ public class BigNumberTest extends TestCase {
     public void testMergeOddSize() {
         BigNumber number = new BigNumber(10,"1234567");
         List<BigNumber> nums = number.divideInto(2);
-        for (BigNumber item: nums) {
-            System.out.println(item);
-        }
         assertEquals("1234567",BigNumber.merge(nums).toString());
     }
 
@@ -134,5 +132,21 @@ public class BigNumberTest extends TestCase {
         assertEquals("1",BigNumber.merge(nums).toString());
     }
 
+    @Test
+    public void testLinearFeedbackShiftRegister() {
+        SingleVariableFunction function = x -> {
+            int sum = 0;
+            sum += x.getDigitAt(9);
+            sum += x.getDigitAt(6);
+            sum += x.getDigitAt(3);
+            sum += x.getDigitAt(2);
+            sum += x.getDigitAt(0);
+            return sum%2;
+        };
+
+        BigNumber start = new BigNumber(2, "1001001001");
+        BigNumber rez = BigNumber.linearFeedbackShiftRegister(start, function, 13);
+        assertEquals("1001001001001", rez.toString());
+    }
 
 }
