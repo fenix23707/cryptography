@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class Runner {
     public static void main(String[] args) throws UnsupportedEncodingException {
 
+        // test git 
         /*BigNumber msg = new BigNumber(16, "CACEC2C7CEC2C2CB");//ковзоввл
         BigNumber key = new BigNumber(16, "CACEC2C7CEC2C2");
 
